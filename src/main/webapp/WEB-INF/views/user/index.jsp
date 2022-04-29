@@ -11,13 +11,8 @@
 				<h1 style="margin:auto;">Không có kết quả tìm kiếm</h1>
 			</c:if>
 			<c:forEach items="${listQuizs}" var="quiz">
-				<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">
-					<c:if test="${sessionScope.user!=null}">
-						<a href="/quiz?quizID=${quiz.quizID }">
-					</c:if>
-					<c:if test="${sessionScope.user==null}">
-						<a href="/login">
-					</c:if>
+				<div class="col-xs-12 col-sm-6 col-md-3 col-lg-3">			
+						<a href="/quiz?quizID=${quiz.quizID }">				
 					<div class="card-flyer">
 						<div class="text-box">
 							<div class="image-box">

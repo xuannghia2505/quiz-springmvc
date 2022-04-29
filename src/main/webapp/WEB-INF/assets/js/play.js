@@ -12,34 +12,86 @@ if(document.getElementById('questionEnglish0')!=null){
 // score
 let score=0, currentQuestionIndex =0;
 let questionSize = document.getElementById('questionSize').value;
+
 let questionContainer = document.getElementById(`question-container${currentQuestionIndex}`);
+let audioPlay = document.getElementById(`audio${currentQuestionIndex}`);
+setTimeout(function(){
+	  audioPlay.play();
+},1000);
 const correctAudio = document.getElementById('correctAnswer');
 const wrongAudio = document.getElementById('wrongAnswer');
 questionContainer.classList.remove('hide');
 
+// tao mang danh dau question da lam
+var question_array = new Array(questionSize);
+for (var i = 0; i < question_array.length; i++){
+	question_array[i]=false;
+}
+
+function nextQ(){
+	if(currentQuestionIndex<questionSize-1){
+		currentQuestionIndex++;
+	    questionContainer.classList.add('hide');
+	    questionContainer = document.getElementById(`question-container${currentQuestionIndex}`)
+	    audioPlay = document.getElementById(`audio${currentQuestionIndex}`);
+	    setTimeout(function(){
+	    	  audioPlay.play();
+	    },1);
+	    questionContainer.classList.remove('hide');
+	}
+	
+}
+function preQ(){
+	if(currentQuestionIndex>0){
+		currentQuestionIndex--;
+	    questionContainer.classList.add('hide');
+	    questionContainer = document.getElementById(`question-container${currentQuestionIndex}`)
+	    audioPlay = document.getElementById(`audio${currentQuestionIndex}`);
+	    setTimeout(function(){
+	    	  audioPlay.play();
+	    },1);
+	    questionContainer.classList.remove('hide');
+	}
+	
+}
 function nextQuestion(){
 	currentQuestionIndex++;
     questionContainer.classList.add('hide');
     questionContainer = document.getElementById(`question-container${currentQuestionIndex}`)
+    audioPlay = document.getElementById(`audio${currentQuestionIndex}`);
+    setTimeout(function(){
+    	  audioPlay.play();
+    },5000);
     questionContainer.classList.remove('hide');
 }
 function selectAnswer(answer) {
+	
     let correct=document.getElementById(`correctAnswer${currentQuestionIndex}`).value;
     if(correct==answer){
-      score++;
+    	
+    	if(!question_array[currentQuestionIndex]){
+    		  score++;
+    		  question_array[currentQuestionIndex]=true;
+    	}
+    
   	alertC2.classList.add('show');
     alertC2.classList.remove('hide');
-    alertC2.classList.add('showAlert');      
+    alertC2.classList.add('showAlert');  
     correctAudio.play();
+    
     setTimeout(function(){
- 	   alertC1.classList.remove('show');
- 	   alertC1.classList.add('hide');
+    	alertC2.classList.remove('show');	
+    	alertC2.classList.add('hide');
       }, 3000);
     }else{
     	alertW.classList.add('show');
         alertW.classList.remove('hide');
         alertW.classList.add('showAlert'); 
         wrongAudio.play();
+        if(question_array[currentQuestionIndex]){
+  		  score--;
+  		  question_array[currentQuestionIndex]=false;
+  	}
         setTimeout(function(){
      	   alertW.classList.remove('show');
      	   alertW.classList.add('hide');
@@ -52,9 +104,13 @@ function selectAnswer(answer) {
     	questionContainer.classList.add('hide');
     	document.getElementById('resultQuiz').value=(score*100/questionSize).toFixed(); 
     	document.getElementById('tableResult').classList.remove('hide');
+    	  document.getElementById('iconHome').classList.add('hide');
+  	    document.getElementById('iconPre').classList.add('hide');
+  	    document.getElementById('iconNext').classList.add('hide');
     	
    
     }
+    console.log(score);
    
   }
 
@@ -110,8 +166,8 @@ recognition.onresult = function(event) {
            alertC2.classList.add('showAlert');      
            correctAudio.play();
            setTimeout(function(){
-        	   alertC1.classList.remove('show');
-        	   alertC1.classList.add('hide');
+        	   alertC2.classList.remove('show');
+        	   alertC2.classList.add('hide');
              }, 3000);
     	
     }else if(distance(content,answer)==1){
@@ -120,8 +176,8 @@ recognition.onresult = function(event) {
         alertC1.classList.add('showAlert');      
         correctAudio.play();
         setTimeout(function(){
-     	   alertC2.classList.remove('show');
-     	   alertC2.classList.add('hide');
+        	alertC1.classList.remove('show');
+        	alertC1.classList.add('hide');
           }, 3000);
     } 
     
@@ -158,6 +214,7 @@ document.querySelector('#btnPre').addEventListener('click', function(){
 		currentQuestionIndex--;
 	    questionContainer.classList.add('hide');
 	    questionContainer = document.getElementById(`question-container${currentQuestionIndex}`)
+	   
 	    questionContainer.classList.remove('hide');
 	}
 	
@@ -167,6 +224,7 @@ document.querySelector('#btnNext').addEventListener('click', function(){
 		currentQuestionIndex++;
 	    questionContainer.classList.add('hide');
 	    questionContainer = document.getElementById(`question-container${currentQuestionIndex}`)
+	  
 	    questionContainer.classList.remove('hide');
 	}
 });

@@ -2,17 +2,17 @@
     pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@include file="header.jsp" %>
-<div style="display:flex;">
+<div style="display:flex;  margin-top:50px;">
  
-	 <form action="/acc/search" method="post" class="form-inline form-search-custom" style="margin-left:540px; margin-bottom:20px;">
+	 <form action="/acc/search" method="post" class="form-inline form-search-custom" style="margin-left:440px; margin-bottom:20px;">
       <input class="form-control mr-sm-2" type="search" placeholder="Tìm kiếm User" aria-label="Search" name="keySearch">
-      <button class="btn btn-primary my-2 my-sm-0" type="submit">Tìm kiếm</button>
+      <button class="btn btn-primary my-2 my-sm-0" type="submit">Search</button>
        <button class="btn btn-success ml-2 " type="button" onclick="createForm()">Create</button>
     </form>
     <span id="titleEdit" style="font-size:32px; font-weight:600; margin-left:30px;" class="hide"> Edit User</span>
     <span id="titleCreate" class="hide" style="font-size:32px; font-weight:600; margin-left:30px;"> Create User</span>
     </div>
-    <div class="container" style="display:flex;">
+    <div class="container-fluid" style="display:flex;">
     <div>
 <table class="table table-hover" style="width:800px;">
   <thead>
@@ -74,22 +74,25 @@
 </div>
 <div id="rsUser"></div>
 
-<form action="/acc/create" method="post" class="hide"  id="formCreateUser" style="align-items:center; text-align:center; margin-left:30px;"  onsubmit="return Validation();">
+<form action="/acc/create" method="post" class="hide"  id="formCreateUser" style=" margin-left:50px;"  onsubmit="return Validation();">
   <div class="form-group">
-  
-    <input type="text" class="form-control" style="width:250px;" name="username" oninput="checkUser()" id="username" placeholder="Username" >
+  	  <b >Username</b>
+    <input type="text" class="form-control" style="width:350px;" name="username" oninput="checkUser()" id="username" placeholder="Username" >
     <small style="color:red" id="userValid"></small>
   </div>
   <div class="form-group">
-    <input type="text" class="form-control" style="width:250px;" name="password" placeholder="Password" id="password">
+   <b>Password</b>
+    <input type="text" class="form-control" style="width:350px;" name="password" placeholder="Password" id="password">
     <small style="color:red" id="password1"></small>
   </div>
   <div class="form-group">
-    <input type="text" class="form-control" style="width:250px;"   name="name" placeholder="Name" id="name" >
+   <b>Name</b>
+    <input type="text" class="form-control" style="width:350px;"   name="name" placeholder="Name" id="name" >
      <small style="color:red" id="name1"></small>
   </div>
   <div class="form-group">
-    <input type="text" class="form-control" style="width:250px;"   name="age" placeholder="Age" id="age">
+   <b>Age</b>
+    <input type="text" class="form-control" style="width:350px;"   name="age" placeholder="Age" id="age">
      <small style="color:red" id="age1"></small>
   </div>
   <button type="submit" class="btn btn-primary">Submit</button>
@@ -167,7 +170,7 @@
 		if(document.getElementById('userValid').innerText==""){
 		if(username==""){
 			flag=false;
-			document.getElementById('userValid').innerText="Không được bỏ trống";
+			document.getElementById('userValid').innerText="Không được bỏ trống Username";
 		}else{
 			document.getElementById('userValid').innerText="";
 		}
@@ -177,27 +180,54 @@
 		
 		if(password==""){
 			flag=false;
-			document.getElementById('password1').innerText="Không được bỏ trống";
+			document.getElementById('password1').innerText="Không được bỏ trống Password";
 		}else{
 			document.getElementById('password1').innerText="";
 		}
 		
 		if(name==""){
 			flag=false;
-			document.getElementById('name1').innerText="Không được bỏ trống";
+			document.getElementById('name1').innerText="Không được bỏ trống Name";
 		}else{
 			document.getElementById('name1').innerText="";
 		}
 		if(age==""){
 			flag=false;
-			document.getElementById('age1').innerText="Không được bỏ trống";
+			document.getElementById('age1').innerText="Không được bỏ trống Age";
 		}else{
 			document.getElementById('age1').innerText="";
 		}
 		
 		return flag;
 	}
-
+	function ValidationEdit(){
+		let flag=true;
+		let password = document.getElementById('passwordEdit').value;	
+		let name = document.getElementById('nameEdit').value;
+		let age = document.getElementById('ageEdit').value;
+		
+		if(password==""){
+			flag=false;
+			document.getElementById('password1').innerText="Không được bỏ trống Password";
+		}else{
+			document.getElementById('password1').innerText="";
+		}
+		
+		if(name==""){
+			flag=false;
+			document.getElementById('name1').innerText="Không được bỏ trống Name";
+		}else{
+			document.getElementById('name1').innerText="";
+		}
+		if(age==""){
+			flag=false;
+			document.getElementById('age1').innerText="Không được bỏ trống Age";
+		}else{
+			document.getElementById('age1').innerText="";
+		}
+		
+		return flag;
+	}
 		
 		
 	</script>

@@ -196,9 +196,7 @@ public class UserController {
     }
 	@RequestMapping(value= {"/quiz"}, method=RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     public ModelAndView quizDes(Model model,HttpSession session,HttpServletRequest  request,HttpServletResponse response) {
-		if(session.getAttribute("user")==null) {
- 			return new ModelAndView("redirect:/");
- 		}
+		
 	 		try {
 	 			QuizDAO quizDAO = new QuizDAO();
 		 		int id = Integer.parseInt(request.getParameter("quizID"));
@@ -217,9 +215,7 @@ public class UserController {
     }
 	@RequestMapping(value= {"/play"}, method=RequestMethod.GET,produces = "text/plain;charset=UTF-8")
     public ModelAndView playQuiz(Model model,HttpSession session,HttpServletRequest  request,HttpServletResponse response) {
-		if(session.getAttribute("user")==null) {
- 			return new ModelAndView("redirect:/");
- 		}
+		
 	 		try {
 	 			QuizDAO quizDAO = new QuizDAO();
 		 		int id = Integer.parseInt(request.getParameter("quizID"));
@@ -290,7 +286,7 @@ public class UserController {
 				for(Quiz quiz:listQuizs) {
 					out.println("  <div class=\"col-xs-12 col-sm-6 col-md-3 col-lg-3\">");
 					if(session.getAttribute("user")!=null) {
-						out.println(" <a href=\"/quiz?quizID=${quiz.quizID }\">");
+						out.println(" <a href=\"/quiz?quizID="+quiz.getQuizID()+"\">");
 					}else {
 						out.println(" <a href=\"/login\">");
 					}

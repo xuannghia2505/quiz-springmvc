@@ -1,4 +1,4 @@
-*, *::before, *::after {
+* {
 	box-sizing: border-box;
 	font-family: Gotham Rounded;
 }
@@ -30,7 +30,7 @@ body.wrong { -
 }
 
 #backgroundPlay {
-	background-image: url(../../assets/images/backgroundplay.png);
+	background-image: url(../../assets/images/dv2.jpg);
 	background-size: cover;
 	background-position: center;
 	display: flex;
@@ -42,7 +42,7 @@ body.wrong { -
 .question {
 	text-align: center;
 	padding: 20px 100px;
-	margin: 30px 0 100px 0;
+	margin: 0 0 100px 0;
 	font-size: 100px;
 	font-weight: 900px;
 }
@@ -299,3 +299,75 @@ translateX
 	font-size: 22px;
 	line-height: 40px;
 }
+
+#iconHome{
+	position:absolute;
+	right:320px;
+	top:0px;
+	color: green;
+	font-size:50px;
+	
+}
+
+
+#iconHome .tooltiptext {
+ color:black;
+ position:absolute;
+ right:5px;
+top:58px;
+  display:none;
+  font-size: 15px;
+    background-color: #d8dbad;
+}
+
+#iconHome:hover .tooltiptext {
+  display:block;
+}
+
+#iconPre .tooltiptext {
+ color:black;
+ position:absolute;
+ right:15px;
+top:58px;
+  display:none;
+  font-size: 15px;
+    background-color: #d8dbad;
+}
+
+#iconPre:hover .tooltiptext {
+  display:block;
+}
+
+#iconNext .tooltiptext {
+ color:black;
+ position:absolute;
+ right:8px;
+top:52px;
+  display:none;
+  font-size: 15px;
+    background-color: #d8dbad;
+}
+
+
+#iconNext:hover .tooltiptext {
+  display:block;
+}
+
+#iconPre{
+	position:absolute;
+	left:300px;
+	top:100px;
+	color: blue;
+	font-size:40px;
+	
+}
+#iconNext{
+	position:absolute;
+	right:300px;
+	top:100px;
+	color: blue;
+	font-size:40px;
+	
+}
+
+

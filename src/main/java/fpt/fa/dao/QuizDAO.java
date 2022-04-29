@@ -187,7 +187,7 @@ public class QuizDAO {
 		}
 		return listQuestion;
 	}
-	
+
 	public Question getQuestionByID(int id) throws SQLException {
 		Question question = null;
 		try {
@@ -394,17 +394,16 @@ public class QuizDAO {
 		return listQuiz;
 	}
 
-	public void insertQuiz(String name, String catelogy, String image, int numberQuestion) throws SQLException {
+	public void insertQuiz(String name, String catelogy, String image) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Quiz values (?,?,?,?)";
+			String query = "insert into Quiz values (?,?,?,0)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, name);
 			ps.setString(2, catelogy);
 			ps.setNString(3, image);
-			ps.setInt(4, numberQuestion);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -431,12 +430,46 @@ public class QuizDAO {
 			conn = new DBConnect().getConnection();
 
 			String query = "update Quiz\r\n" + "set name=?,catelogy=?,image=?,numberQuestion=?\r\n" + "where quizID=? ";
+
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setString(1, name);
 			ps.setString(2, catelogy);
 			ps.setNString(3, image);
 			ps.setInt(4, numberQuestion);
 			ps.setInt(5, quizID);
+
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+
+	}
+
+	public void updateQuizNoImage(int quizID, String name, String catelogy, int numberQuestion) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "update Quiz\r\n" + "set name=?,catelogy=?,numberQuestion=?\r\n" + "where quizID=? ";
+
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, name);
+			ps.setString(2, catelogy);
+			ps.setInt(3, numberQuestion);
+			ps.setInt(4, quizID);
+
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -491,9 +524,11 @@ public class QuizDAO {
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "delete from Quiz\r\n" + "where quizID=?";
+			String query = "delete from Question\r\n" + "where quizID=?\r\n" + "delete from Quiz\r\n"
+					+ "where quizID=? ";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setInt(1, quizID);
+			ps.setInt(2, quizID);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -526,7 +561,7 @@ public class QuizDAO {
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-			
+
 			if (rs != null) {
 				rs.close();
 			}
@@ -536,35 +571,34 @@ public class QuizDAO {
 			if (conn != null) {
 				conn.close();
 			}
-			
+
 		}
 
 	}
 
-	public void addQuestion(int quizID,String question,String answerA,String answerB,String answerC,String answerD,
-			String correctAnswer,String image,String audio) throws SQLException {
+	public void addQuestion(int quizID, String question, String answerA, String answerB, String answerC, String answerD,
+			String correctAnswer, String image, String audio) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Question values\r\n" + 
-					"(?,?,?,?,?,?,?,?,?)";
+			String query = "insert into Question values\r\n" + "(?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
-			ps.setNString(1,question);
-			ps.setNString(2,answerA);
-			ps.setNString(3,answerB);
-			ps.setNString(4,answerC);
-			ps.setNString(5,answerD);
-			ps.setNString(6,correctAnswer);
-			ps.setString(7,image);
-			ps.setString(8,audio);
+			ps.setNString(1, question);
+			ps.setNString(2, answerA);
+			ps.setNString(3, answerB);
+			ps.setNString(4, answerC);
+			ps.setNString(5, answerD);
+			ps.setNString(6, correctAnswer);
+			ps.setString(7, image);
+			ps.setString(8, audio);
 			ps.setInt(9, quizID);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
-		
+
 			if (rs != null) {
 				rs.close();
 			}
@@ -576,17 +610,17 @@ public class QuizDAO {
 			}
 			updateNumberByQuizID(quizID);
 		}
-		
+
 	}
+
 	public void updateNumberByQuizID(int quizID) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "update Quiz \r\n" + 
-					"set numberQuestion= questionUpdate.number\r\n" + 
-					"from (select count(1) as number from Question where quizID=?) as questionUpdate\r\n" + 
-					"where quizID=?";
+			String query = "update Quiz \r\n" + "set numberQuestion= questionUpdate.number\r\n"
+					+ "from (select count(1) as number from Question where quizID=?) as questionUpdate\r\n"
+					+ "where quizID=?";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setInt(1, quizID);
 			ps.setInt(2, quizID);
@@ -608,19 +642,17 @@ public class QuizDAO {
 		}
 
 	}
+
 	public void updateNumberByQuestionID(int questionID) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "declare @quizID as int \r\n" + 
-					"set @quizID = (select quizID from Question where questionID=?)\r\n" + 
-					"update Quiz\r\n" + 
-					"set numberQuestion= questionUpdate.number\r\n" + 
-					"from\r\n" + 
-					"(select count(1)-1 as number from Question \r\n" + 
-					"where quizID=@quizID) as questionUpdate\r\n" + 
-					"where Quiz.quizID=@quizID";
+			String query = "declare @quizID as int \r\n"
+					+ "set @quizID = (select quizID from Question where questionID=?)\r\n" + "update Quiz\r\n"
+					+ "set numberQuestion= questionUpdate.number\r\n" + "from\r\n"
+					+ "(select count(1)-1 as number from Question \r\n" + "where quizID=@quizID) as questionUpdate\r\n"
+					+ "where Quiz.quizID=@quizID";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setInt(1, questionID);
 			ps.executeUpdate();
@@ -641,16 +673,16 @@ public class QuizDAO {
 		}
 
 	}
-	
-	public void updateQuestion(int questionID, String question, String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer, String image, String audio, int quizID) throws SQLException {
+
+	public void updateQuestion(int questionID, String question, String answerA, String answerB, String answerC,
+			String answerD, String correctAnswer, String image, String audio, int quizID) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "update Question\r\n" + 
-					"set question=?,answerA=?,answerB=?,answerC=?,answerD=?,correctAnswer=?,image=?,audio=?,quizID=?\r\n" + 
-					"where questionID=?";
+			String query = "update Question\r\n"
+					+ "set question=?,answerA=?,answerB=?,answerC=?,answerD=?,correctAnswer=?,image=?,audio=?,quizID=?\r\n"
+					+ "where questionID=?";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setNString(1, question);
 			ps.setNString(2, answerA);
@@ -680,7 +712,7 @@ public class QuizDAO {
 		}
 
 	}
-	
+
 	public int getQuizIDbyQuestionID(int questionID) throws SQLException {
 		int id = 0;
 		try {
@@ -689,8 +721,8 @@ public class QuizDAO {
 			String query = "select quizID from Question where questionID=?";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setInt(1, questionID);
-			rs= ps.executeQuery();
-			if(rs.next()) {
+			rs = ps.executeQuery();
+			if (rs.next()) {
 				id = rs.getInt(1);
 			}
 		} catch (Exception e) {
@@ -709,4 +741,117 @@ public class QuizDAO {
 		}
 		return id;
 	}
+
+	public void updateQuestion1(int questionID, String question, String answerA, String answerB, String answerC,
+			String answerD, String correctAnswer, int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "update Question\r\n"
+					+ "set question=?,answerA=?,answerB=?,answerC=?,answerD=?,correctAnswer=?,quizID=?\r\n"
+					+ "where questionID=?";
+
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, question);
+			ps.setString(2, answerA);
+			ps.setString(3, answerB);
+			ps.setString(4, answerC);
+			ps.setString(5, answerD);
+			ps.setString(6, correctAnswer);
+			ps.setInt(7, quizID);
+			ps.setInt(8, questionID);
+
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+
+	}
+	public void updateQuestion2(int questionID, String question,  String correctAnswer,String image, int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "update Question\r\n" + 
+					"set question=?,correctAnswer=?,image=?,quizID=?\r\n" + 
+					"where questionID=?";
+
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, question);
+			ps.setString(2, correctAnswer);
+			ps.setString(3, image);
+			ps.setInt(4, quizID);
+			ps.setInt(5, questionID);
+
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+
+	}
+	public void updateQuestion3(int questionID,  String answerA, String answerB, String answerC,
+			String answerD, String correctAnswer,String audio, int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "update Question\r\n" + 
+					"set answerA=?,answerB=?,answerC=?,answerD=?,correctAnswer=?,audio=?,quizID=?\r\n" + 
+					"where questionID=?";
+
+			PreparedStatement ps = conn.prepareStatement(query);
+
+			ps.setString(1, answerA);
+			ps.setString(2, answerB);
+			ps.setString(3, answerC);
+			ps.setString(4, answerD);
+			ps.setString(5, correctAnswer);
+			ps.setString(6, audio);
+			ps.setInt(7, quizID);
+			ps.setInt(8, questionID);
+
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+
+	}
+	
 }

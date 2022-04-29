@@ -12,6 +12,8 @@ import org.springframework.core.env.Environment;
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.DriverManagerDataSource;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import org.springframework.web.multipart.MultipartResolver;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
@@ -36,6 +38,15 @@ public class ApplicationContextConfig {
        viewResolver.setSuffix(".jsp");
 
        return viewResolver;
+   }
+   
+   @Bean(name = "multipartResolver")
+   public MultipartResolver getMultipartResolver() {
+       CommonsMultipartResolver resover = new CommonsMultipartResolver();
+       // 1MB
+       resover.setMaxUploadSize(1 * 1024 * 1024);
+
+       return resover;
    }
 
    
