@@ -358,7 +358,7 @@ public class AdminController {
 							+ "    <input id=\"quizNameEdit\" type=\"text\" class=\"form-control\" style=\"width:250px;\" value=\""
 							+ quiz.getName() + "\" name=\"quizName\" >\r\n" + "  </div>\r\n"
 							+ "  <div class=\"form-group\">\r\n"
-							+ "<small style=\"color:red\" id=\"errorName\"></small>"
+							+ "<small style=\"color:red\" id=\"errorNameEdit\"></small>"
 							+ "     <select class=\"form-control\" name=\"catelogy\" id=\"selectCatelogy\">\r\n");
 			for (int i = 0; i < listCatelogy.size(); i++) {
 				if (listCatelogy.get(i).equals(quiz.getCatelogy())) {
@@ -622,8 +622,8 @@ public class AdminController {
 
 	}
 
-	@RequestMapping(value = { "/question/add" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
-	public ModelAndView AddQuestion(@RequestParam(value = "image") CommonsMultipartFile file,
+	@RequestMapping(value = { "/question/addFull" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	public ModelAndView AddQuestionFull(@RequestParam(value = "image") CommonsMultipartFile file,
 			@RequestParam(value = "audio") CommonsMultipartFile file2, RedirectAttributes redirectAttributes,
 			Model model, HttpSession session, HttpServletRequest request, HttpServletResponse response) {
 		if (session.getAttribute("user") != null) {
@@ -691,7 +691,7 @@ public class AdminController {
 	}
 
 	@RequestMapping(value = { "/question/delete" }, method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
-	public ModelAndView DeleteQuestion(Model model, HttpSession session, HttpServletRequest request,
+	public ModelAndView DeleteQuestion(RedirectAttributes rd,Model model, HttpSession session, HttpServletRequest request,
 			HttpServletResponse response) {
 		if (session.getAttribute("user") != null) {
 			Account account = (Account) session.getAttribute("user");
@@ -704,13 +704,15 @@ public class AdminController {
 
 		try {
 			int questionID = Integer.parseInt(request.getParameter("questionID"));
+			int quizID = Integer.parseInt(request.getParameter("quizID"));
+			rd.addFlashAttribute("quizID", quizID);
 			QuizDAO quizDAO = new QuizDAO();
 			quizDAO.deleteQuestion(questionID);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-
-		return new ModelAndView("redirect:/question/list");
+		
+		return new ModelAndView("redirect:/question/editQuestion");
 	}
 
 	@RequestMapping(value = { "/question/edit" }, method = RequestMethod.GET, produces = "text/plain;charset=UTF-8")
@@ -895,32 +897,361 @@ public class AdminController {
 		String question = request.getParameter("question");
 		int quizID = Integer.parseInt(request.getParameter("quizID"));
 		// image
-
 		String image = "";
-		String absolutefilePath = request.getServletContext().getRealPath("/images/" + quizID);
-		File dir = new File(absolutefilePath);
-		if (!dir.exists()) {
-			dir.mkdirs();
+		if (file != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image += "/images/quiz/" + name;
 		}
 
-		byte[] bytes = file.getBytes();
-		Date date = new Date();
-		String name = date.getTime() + file.getOriginalFilename();
+		if (file.getOriginalFilename().equals("")) {
+			quizDAO.updateQuestion2NoImage(questionID, question, question.toLowerCase(), quizID);
+		} else {
+			quizDAO.updateQuestion2(questionID, question, question.toLowerCase(), image, quizID);
+		}
+		rd.addFlashAttribute("quizID", quizID);
+		return new ModelAndView("redirect:/question/editQuestion");
 
-		File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
-		BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
-		outputStream.write(bytes);
-		outputStream.close();
-		image += "/images/" + quizID + "/" + name;
+	}
 
+	@RequestMapping(value = { "/question/update3" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	public ModelAndView update3(@RequestParam(value = "answerA") CommonsMultipartFile file1,
+			@RequestParam(value = "answerB") CommonsMultipartFile file2,
+			@RequestParam(value = "answerC") CommonsMultipartFile file3,
+			@RequestParam(value = "answerD") CommonsMultipartFile file4,
+			@RequestParam(value = "audio") CommonsMultipartFile file5, RedirectAttributes rd, Model model,
+			HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, SQLException {
+
+		QuizDAO quizDAO = new QuizDAO();
+		int questionID = Integer.parseInt(request.getParameter("questionID"));
+		Question questionRoot = quizDAO.getQuestionByID(questionID);
+		String correctAnswer = request.getParameter("correctAnswer");
+		int quizID = Integer.parseInt(request.getParameter("quizID"));
+		// image1
+		String image1 = "";
+		if (file1 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file1.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file1.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image1 += "/images/quiz/" + name;
+		}
+
+		if (file1.getOriginalFilename().equals("")) {
+			image1 = questionRoot.getAnswerA();
+		}
+		// image1
+		String image2 = "";
+		if (file2 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file2.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file2.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image2 += "/images/quiz/" + name;
+		}
+
+		if (file2.getOriginalFilename().equals("")) {
+			image2 = questionRoot.getAnswerB();
+		}
+		// image3
+		String image3 = "";
+		if (file1 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file3.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file3.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image3 += "/images/quiz/" + name;
+		}
+
+		if (file3.getOriginalFilename().equals("")) {
+			image3 = questionRoot.getAnswerC();
+		}
+		// image4
+		String image4 = "";
+		if (file4 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file4.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file4.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image4 += "/images/quiz/" + name;
+		}
+
+		if (file4.getOriginalFilename().equals("")) {
+			image4 = questionRoot.getAnswerD();
+		}
+		// audio
+
+		String audio = "";
+		if (file5 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/audios/" + quizID);
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file5.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file5.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			audio += "audios/" + quizID + "/" + name;
+		}
+		if (file5.getOriginalFilename().equals("")) {
+			audio = questionRoot.getAudio();
+		}
+		quizDAO.updateQuestion3(questionID, image1, image2, image3, image4, correctAnswer, audio, quizID);
+		rd.addFlashAttribute("quizID", quizID);
+		return new ModelAndView("redirect:/question/editQuestion");
+
+	}
+
+	@RequestMapping(value = { "/question/add1" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	public ModelAndView questionAdd1(RedirectAttributes redirectAttributes, Model model, HttpSession session,
+			HttpServletRequest request, HttpServletResponse response) {
+		if (session.getAttribute("user") != null) {
+			Account account = (Account) session.getAttribute("user");
+			if (account.getRole() != 0) {
+				return new ModelAndView("redirect:/");
+			}
+		} else {
+			return new ModelAndView("redirect:/");
+		}
 		try {
-			quizDAO.updateQuestion2(questionID, question,question.toLowerCase(),image, quizID);
-			rd.addFlashAttribute("quizID", quizID);
-
+			QuizDAO quizDAO = new QuizDAO();
+			int quizID = Integer.parseInt(request.getParameter("quizID"));
+			String question = request.getParameter("question");
+			String answerA = request.getParameter("answerA");
+			String answerB = request.getParameter("answerB");
+			String answerC = request.getParameter("answerC");
+			String answerD = request.getParameter("answerD");
+			String correctAnswer = request.getParameter("correctAnswer");
+			quizDAO.addQuestion1(question, answerA, answerB, answerC, answerD, correctAnswer, quizID);
+			redirectAttributes.addFlashAttribute("quizID", quizID);
 		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return new ModelAndView("redirect:/question/editQuestion");
+	}
+
+	@RequestMapping(value = { "/question/add2" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	public ModelAndView questionAdd2(@RequestParam(value = "image") CommonsMultipartFile file,
+			RedirectAttributes redirectAttributes, Model model, HttpSession session, HttpServletRequest request,
+			HttpServletResponse response) {
+		if (session.getAttribute("user") != null) {
+			Account account = (Account) session.getAttribute("user");
+			if (account.getRole() != 0) {
+				return new ModelAndView("redirect:/");
+			}
+		} else {
+			return new ModelAndView("redirect:/");
+		}
+		try {
+			QuizDAO quizDAO = new QuizDAO();
+			int quizID = Integer.parseInt(request.getParameter("quizID"));
+			String question = request.getParameter("question");
+			// image1
+			String image = "";
+			if (file != null) {
+				String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+				File dir = new File(absolutefilePath);
+				if (!dir.exists()) {
+					dir.mkdirs();
+				}
+
+				byte[] bytes = file.getBytes();
+				Date date = new Date();
+				String name = date.getTime() + file.getOriginalFilename();
+
+				File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+				outputStream.write(bytes);
+				outputStream.close();
+				image += "/images/quiz/" + name;
+			}
+
+			quizDAO.addQuestion2(question, image, quizID);
+			redirectAttributes.addFlashAttribute("quizID", quizID);
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		return new ModelAndView("redirect:/question/editQuestion");
+	}
+	
+	@RequestMapping(value = { "/question/add3" }, method = RequestMethod.POST, produces = "text/plain;charset=UTF-8")
+	public ModelAndView questionAdd2(@RequestParam(value = "answerA") CommonsMultipartFile file1,
+			@RequestParam(value = "answerB") CommonsMultipartFile file2,
+			@RequestParam(value = "answerC") CommonsMultipartFile file3,
+			@RequestParam(value = "answerD") CommonsMultipartFile file4,
+			@RequestParam(value = "audio") CommonsMultipartFile file5, RedirectAttributes rd, Model model,
+			HttpSession session, HttpServletRequest request, HttpServletResponse response)
+			throws IOException, SQLException {
+
+		QuizDAO quizDAO = new QuizDAO();
+		String correctAnswer = request.getParameter("correctAnswer");
+		int quizID = Integer.parseInt(request.getParameter("quizID"));
+		// image1
+		String image1 = "";
+		if (file1 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file1.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file1.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image1 += "/images/quiz/" + name;
+		}
+
+		
+		// image1
+		String image2 = "";
+		if (file2 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file2.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file2.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image2 += "/images/quiz/" + name;
+		}
+		// image3
+		String image3 = "";
+		if (file1 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file3.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file3.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image3 += "/images/quiz/" + name;
+		}
+
+		
+		// image4
+		String image4 = "";
+		if (file4 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/images/quiz");
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file4.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file4.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			image4 += "/images/quiz/" + name;
+		}
+
+		
+		// audio
+
+		String audio = "";
+		if (file5 != null) {
+			String absolutefilePath = request.getServletContext().getRealPath("/audios/" + quizID);
+			File dir = new File(absolutefilePath);
+			if (!dir.exists()) {
+				dir.mkdirs();
+			}
+
+			byte[] bytes = file5.getBytes();
+			Date date = new Date();
+			String name = date.getTime() + file5.getOriginalFilename();
+
+			File uploadfile = new File(dir.getAbsolutePath() + "\\" + name);
+			BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
+			outputStream.write(bytes);
+			outputStream.close();
+			audio += "audios/" + quizID + "/" + name;
+		}
+		quizDAO.addQuestion3(image1, image2, image3, image4, correctAnswer, audio, quizID);
+		rd.addFlashAttribute("quizID", quizID);
 		return new ModelAndView("redirect:/question/editQuestion");
 
 	}

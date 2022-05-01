@@ -187,7 +187,7 @@ public class QuizDAO {
 		}
 		return listQuestion;
 	}
-
+	
 	public Question getQuestionByID(int id) throws SQLException {
 		Question question = null;
 		try {
@@ -814,6 +814,40 @@ public class QuizDAO {
 		}
 
 	}
+	public void updateQuestion2NoImage(int questionID, String question,  String correctAnswer, int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "update Question\r\n" + 
+					"set question=?,correctAnswer=?,quizID=?\r\n" + 
+					"where questionID=?";
+
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setString(1, question);
+			ps.setString(2, correctAnswer);
+			ps.setInt(3, quizID);
+			ps.setInt(4, questionID);
+
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+
+	}
+
 	public void updateQuestion3(int questionID,  String answerA, String answerB, String answerC,
 			String answerD, String correctAnswer,String audio, int quizID) throws SQLException {
 
@@ -850,6 +884,109 @@ public class QuizDAO {
 				conn.close();
 			}
 
+		}
+
+	}
+	
+	public void addQuestion1( String question, String answerA, String answerB, String answerC, String answerD,
+			String correctAnswer,int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "insert into Question(question,answerA,answerB,answerC,answerD,correctAnswer,quizID) values\r\n" + 
+					"(?,?,?,?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setNString(1, question);
+			ps.setNString(2, answerA);
+			ps.setNString(3, answerB);
+			ps.setNString(4, answerC);
+			ps.setNString(5, answerD);
+			ps.setNString(6, correctAnswer);
+			ps.setInt(7, quizID);
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+			updateNumberByQuizID(quizID);
+		}
+
+	}
+	public void addQuestion2(String question,String image,int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "insert into Question(question,correctAnswer,image,quizID) values\r\n" + 
+					"(?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ps.setNString(1, question);
+			ps.setNString(2, question.toLowerCase());
+			ps.setNString(3, image);
+			ps.setInt(4, quizID);
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+			updateNumberByQuizID(quizID);
+		}
+
+	}
+	public void addQuestion3(String answerA, String answerB, String answerC, String answerD,
+			String correctAnswer,String audio,int quizID) throws SQLException {
+
+		try {
+			conn = new DBConnect().getConnection();
+
+			String query = "insert into Question(answerA,answerB,answerC,answerD,correctAnswer,audio,quizID) values\r\n" + 
+					"(?,?,?,?,?,?,?)";
+			PreparedStatement ps = conn.prepareStatement(query);
+		
+			ps.setNString(1, answerA);
+			ps.setNString(2, answerB);
+			ps.setNString(3, answerC);
+			ps.setNString(4, answerD);
+			ps.setNString(5, correctAnswer);
+			ps.setNString(6, audio);
+			ps.setInt(7, quizID);
+			ps.executeUpdate();
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+			updateNumberByQuizID(quizID);
 		}
 
 	}
