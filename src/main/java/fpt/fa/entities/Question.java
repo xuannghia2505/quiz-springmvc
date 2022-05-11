@@ -26,12 +26,13 @@ public class Question {
 	private String image;
 	private String audio;
 	private int quizID;
+	private String questionType;
 	public Question() {
 		super();
 		// TODO Auto-generated constructor stub
 	}
 	public Question(int questionID, String question, String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer, String image, String audio, int quizID) {
+			String correctAnswer, String image, String audio, int quizID,String questionType) {
 		super();
 		this.questionID = questionID;
 		this.question = question;
@@ -43,9 +44,10 @@ public class Question {
 		this.image = image;
 		this.audio = audio;
 		this.quizID = quizID;
+		this.questionType=questionType;
 	}
 	public Question( String question, String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer, String image, String audio, int quizID) {
+			String correctAnswer, String image, String audio, int quizID,String questionType) {
 		super();
 		this.question = question;
 		this.answerA = answerA;
@@ -56,6 +58,7 @@ public class Question {
 		this.image = image;
 		this.audio = audio;
 		this.quizID = quizID;
+		this.questionType=questionType;
 	}
 	public int getQuestionID() {
 		return questionID;
@@ -116,6 +119,12 @@ public class Question {
 	}
 	public void setQuizID(int quizID) {
 		this.quizID = quizID;
+	}
+	public String getQuestionType() {
+		return questionType;
+	}
+	public void setQuestionType(String questionType) {
+		this.questionType = questionType;
 	}
 	
 }

@@ -71,6 +71,19 @@ body.wrong { -
 	color: white;
 	pointer:cursor;
 }
+.backhomenoSubmit{
+	text-decoration: none;
+	border: 1px solid #dc3545;
+	background-color: #2cd3a2;
+	color: white;
+	padding: 14px 50px;
+	margin-top: 50px;
+}
+.backhomenoSubmit:hover {
+	background-color: #45baae;
+	color: white;
+	pointer:cursor;
+}
 
 .container {
 	width: 800px;

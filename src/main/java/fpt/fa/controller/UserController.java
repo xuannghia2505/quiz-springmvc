@@ -285,11 +285,9 @@ public class UserController {
 				PrintWriter out = response.getWriter();
 				for(Quiz quiz:listQuizs) {
 					out.println("  <div class=\"col-xs-12 col-sm-6 col-md-3 col-lg-3\">");
-					if(session.getAttribute("user")!=null) {
+				
 						out.println(" <a href=\"/quiz?quizID="+quiz.getQuizID()+"\">");
-					}else {
-						out.println(" <a href=\"/login\">");
-					}
+					
 					out.println(" <div class=\"card-flyer\">\r\n" + 
 							"                        <div class=\"text-box\">\r\n" + 
 							"                            <div class=\"image-box\">\r\n" + 

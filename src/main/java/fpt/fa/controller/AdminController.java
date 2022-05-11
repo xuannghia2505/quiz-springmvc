@@ -360,14 +360,22 @@ public class AdminController {
 							+ "  <div class=\"form-group\">\r\n"
 							+ "<small style=\"color:red\" id=\"errorNameEdit\"></small>"
 							+ "     <select class=\"form-control\" name=\"catelogy\" id=\"selectCatelogy\">\r\n");
+			if(!quiz.getCatelogy().equals("quizenglish")) {
+				
+			
 			for (int i = 0; i < listCatelogy.size(); i++) {
 				if (listCatelogy.get(i).equals(quiz.getCatelogy())) {
 					out.print("<option selected value=\"" + listCatelogy.get(i) + "\">" + listCatelogy.get(i)
 							+ "</option>");
 				} else {
+					if(!listCatelogy.get(i).equals("quizenglish")) {
 					out.print("<option value=\"" + listCatelogy.get(i) + "\">" + listCatelogy.get(i) + "</option>");
+					}
 				}
 
+			}
+			}else {
+				out.print("<option selected value=\"quizenglish\">quizenglish</option>");
 			}
 			out.println("</select> </div><small style=\"color:red\" id=\"errorCatelogy\"></small>\r\n"
 					+ "  <div style=\"display:flex;\" class=\"form-group\">\r\n"
@@ -426,7 +434,7 @@ public class AdminController {
 				BufferedOutputStream outputStream = new BufferedOutputStream(new FileOutputStream(uploadfile));
 				outputStream.write(bytes);
 				outputStream.close();
-				image += "/images/quiz/" + name;
+				image += "images/quiz/" + name;
 			}
 
 			if (file.getOriginalFilename().equals("")) {
@@ -533,10 +541,8 @@ public class AdminController {
 		}
 		QuizDAO quizDAO = new QuizDAO();
 		List<Quiz> listQuiz = new ArrayList<Quiz>();
-		Question question = new Question(0, "0", "0", "0", "0", "0", "0", "0", "0", 0);
+		
 		model.addAttribute("message", "Chọn Quiz bạn muốn xem");
-		model.addAttribute("q", question);
-		model.addAttribute("message2", "none");
 		try {
 			listQuiz = quizDAO.getAllQuiz();
 		} catch (SQLException e) {
@@ -672,14 +678,15 @@ public class AdminController {
 			byte[] bytes2 = file2.getBytes();
 			Date date2 = new Date();
 			String name2 = date2.getTime() + file2.getOriginalFilename();
-
+			
 			File uploadfile2 = new File(dir2.getAbsolutePath() + "\\" + name2);
 			BufferedOutputStream outputStream2 = new BufferedOutputStream(new FileOutputStream(uploadfile2));
 			outputStream2.write(bytes2);
 			outputStream2.close();
 			audio += "audios/" + quizID + "/" + name2;
 			QuizDAO quizDAO = new QuizDAO();
-			quizDAO.addQuestion(quizID, question, answerA, answerB, answerC, answerD, correctAnswer, image, audio);
+			String questionType = request.getParameter("questionType");
+			quizDAO.addQuestion(quizID, question, answerA, answerB, answerC, answerD, correctAnswer, image, audio,questionType);
 			redirectAttributes.addFlashAttribute("quizID", quizID);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -839,14 +846,16 @@ public class AdminController {
 		model.addAttribute("quizID", quizID);
 		ArrayList<Question> listQuestions = new ArrayList<Question>();
 		ArrayList<Quiz> listQuizs = quizDAO.getAllQuiz();
+		ArrayList<Quiz> listQuizsI = quizDAO.getAllQuizIgnoreEnglish();
 		try {
 
 			listQuestions = quizDAO.getQuestionByQuizID(quizID);
 			model.addAttribute("listQuestions", listQuestions);
 			model.addAttribute("listQuizs", listQuizs);
+			model.addAttribute("listQuizsI", listQuizsI);
 			model.addAttribute("quiz", quiz);
 			if (listQuestions.size() == 0) {
-				Question question = new Question(0, "0", "0", "0", "0", "0", "0", "0", "0", 0);
+				Question question = new Question(0, "0", "0", "0", "0", "0", "0", "0", "0", 0,"0");
 				model.addAttribute("message", "Chưa có câu hỏi");
 				model.addAttribute("q", question);
 			} else {
@@ -1081,7 +1090,8 @@ public class AdminController {
 			String answerC = request.getParameter("answerC");
 			String answerD = request.getParameter("answerD");
 			String correctAnswer = request.getParameter("correctAnswer");
-			quizDAO.addQuestion1(question, answerA, answerB, answerC, answerD, correctAnswer, quizID);
+			String questionType = request.getParameter("questionType");
+			quizDAO.addQuestion1(question, answerA, answerB, answerC, answerD, correctAnswer, quizID,questionType);
 			redirectAttributes.addFlashAttribute("quizID", quizID);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1105,6 +1115,7 @@ public class AdminController {
 			QuizDAO quizDAO = new QuizDAO();
 			int quizID = Integer.parseInt(request.getParameter("quizID"));
 			String question = request.getParameter("question");
+			String questionType = request.getParameter("questionType");
 			// image1
 			String image = "";
 			if (file != null) {
@@ -1125,7 +1136,7 @@ public class AdminController {
 				image += "/images/quiz/" + name;
 			}
 
-			quizDAO.addQuestion2(question, image, quizID);
+			quizDAO.addQuestion2(question, image, quizID,questionType);
 			redirectAttributes.addFlashAttribute("quizID", quizID);
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -1147,6 +1158,7 @@ public class AdminController {
 
 		QuizDAO quizDAO = new QuizDAO();
 		String correctAnswer = request.getParameter("correctAnswer");
+		String questionType = request.getParameter("questionType");
 		int quizID = Integer.parseInt(request.getParameter("quizID"));
 		// image1
 		String image1 = "";
@@ -1250,7 +1262,7 @@ public class AdminController {
 			outputStream.close();
 			audio += "audios/" + quizID + "/" + name;
 		}
-		quizDAO.addQuestion3(image1, image2, image3, image4, correctAnswer, audio, quizID);
+		quizDAO.addQuestion3(image1, image2, image3, image4, correctAnswer, audio, quizID,questionType);
 		rd.addFlashAttribute("quizID", quizID);
 		return new ModelAndView("redirect:/question/editQuestion");
 

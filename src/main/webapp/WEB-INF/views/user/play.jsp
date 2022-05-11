@@ -34,7 +34,7 @@
 				<div id="question-container${index.index}" class="hide">
 					<div style="color: red; font-size: 30px;">Câu hỏi số
 						${index.index+1}</div>
-					<c:if test="${question.question!=null && question.answerA!=null }">
+					<c:if test="${question.questionType=='text' }">
 						<div class="question">${question.question }</div>
 						<div class="answer-buttons" class="btn-grid">
 							<button class="btn" onclick="selectAnswer('A')">${question.answerA}</button>
@@ -44,7 +44,7 @@
 							<button class="btn" onclick="selectAnswer('D')">${question.answerD}</button>
 						</div>
 					</c:if>
-					<c:if test="${question.audio!=null }">
+					<c:if test="${question.questionType=='imageAndaudio' }">
 						<audio src="${question.audio }"
 							style="margin-top: 50px;" controls id="audio${index.index}"></audio>
 						<div class="answer-buttons" class="btn-grid"
@@ -61,7 +61,7 @@
 								width="300px" height="200px" style="cursor: pointer;"></img>
 						</div>
 					</c:if>
-					<c:if test="${question.answerA==null }">
+					<c:if test="${question.questionType=='textAndimage' }">
 						<div id="questionEnglish${index.index }" class="question"
 							value="${question.question }">${question.question }
 							<div><img src="${question.image}" alt="image" height="200"></div>
@@ -105,6 +105,8 @@
 					</div>
 
 					<div>
+						<a class="backhomenoSubmit" href="/"  style="cursor: pointer;">
+							Trang chủ</a>
 						<button class="backhome" type="submit" style="cursor: pointer;">Hoàn
 							thành bài thi</button>
 					</div>

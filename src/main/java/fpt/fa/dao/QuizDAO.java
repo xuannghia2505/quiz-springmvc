@@ -68,7 +68,34 @@ public class QuizDAO {
 		}
 		return listQuiz;
 	}
+	public ArrayList<Quiz> getAllQuizIgnoreEnglish() throws SQLException {
+		ArrayList<Quiz> listQuiz = new ArrayList<Quiz>();
+		try {
+			conn = new DBConnect().getConnection();
 
+			String query = "select * from Quiz where catelogy!='quizenglish'";
+			PreparedStatement ps = conn.prepareStatement(query);
+			ResultSet rs = ps.executeQuery();
+			while (rs.next()) {
+				listQuiz.add(new Quiz(rs.getInt(1), rs.getNString(2), rs.getNString(3), rs.getString(4), rs.getInt(5)));
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+		return listQuiz;
+	}
 	/**
 	 * 
 	 * @author NghiaHX
@@ -168,7 +195,7 @@ public class QuizDAO {
 			while (rs.next()) {
 				listQuestion.add(new Question(rs.getInt(1), rs.getNString(2), rs.getNString(3), rs.getString(4),
 						rs.getNString(5), rs.getNString(6), rs.getNString(7), rs.getString(8), rs.getString(9),
-						rs.getInt(10)));
+						rs.getInt(10),rs.getString(11)));
 			}
 
 		} catch (Exception e) {
@@ -200,7 +227,7 @@ public class QuizDAO {
 			if (rs.next()) {
 				question = new Question(rs.getInt(1), rs.getNString(2), rs.getNString(3), rs.getString(4),
 						rs.getNString(5), rs.getNString(6), rs.getNString(7), rs.getString(8), rs.getString(9),
-						rs.getInt(10));
+						rs.getInt(10),rs.getString(11));
 			}
 
 		} catch (Exception e) {
@@ -518,7 +545,35 @@ public class QuizDAO {
 		}
 		return listCatelogy;
 	}
+	public ArrayList<String> getAllCatelogyQuizIgnoreEnglish() throws SQLException {
+		ArrayList<String> listCatelogy = new ArrayList<String>();
+		try {
+			conn = new DBConnect().getConnection();
 
+			String query = "select catelogy from TitleQuiz where catelogy!='quizenglish' ";
+			PreparedStatement ps = conn.prepareStatement(query);
+			rs = ps.executeQuery();
+			while (rs.next()) {
+				listCatelogy.add(rs.getNString(1));
+
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			if (rs != null) {
+				rs.close();
+			}
+			if (ps != null) {
+				ps.close();
+			}
+			if (conn != null) {
+				conn.close();
+			}
+
+		}
+		return listCatelogy;
+	}
 	public void deleteQuiz(int quizID) throws SQLException {
 
 		try {
@@ -577,12 +632,12 @@ public class QuizDAO {
 	}
 
 	public void addQuestion(int quizID, String question, String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer, String image, String audio) throws SQLException {
+			String correctAnswer, String image, String audio,String questionType) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Question values\r\n" + "(?,?,?,?,?,?,?,?,?)";
+			String query = "insert into Question values\r\n" + "(?,?,?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setNString(1, question);
 			ps.setNString(2, answerA);
@@ -593,6 +648,7 @@ public class QuizDAO {
 			ps.setString(7, image);
 			ps.setString(8, audio);
 			ps.setInt(9, quizID);
+			ps.setString(10, questionType);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -889,13 +945,13 @@ public class QuizDAO {
 	}
 	
 	public void addQuestion1( String question, String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer,int quizID) throws SQLException {
+			String correctAnswer,int quizID,String questionType) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Question(question,answerA,answerB,answerC,answerD,correctAnswer,quizID) values\r\n" + 
-					"(?,?,?,?,?,?,?)";
+			String query = "insert into Question(question,answerA,answerB,answerC,answerD,correctAnswer,quizID,questionType) values\r\n" + 
+					"(?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setNString(1, question);
 			ps.setNString(2, answerA);
@@ -904,6 +960,7 @@ public class QuizDAO {
 			ps.setNString(5, answerD);
 			ps.setNString(6, correctAnswer);
 			ps.setInt(7, quizID);
+			ps.setString(8, questionType);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -923,18 +980,19 @@ public class QuizDAO {
 		}
 
 	}
-	public void addQuestion2(String question,String image,int quizID) throws SQLException {
+	public void addQuestion2(String question,String image,int quizID,String questionType) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Question(question,correctAnswer,image,quizID) values\r\n" + 
-					"(?,?,?,?)";
+			String query = "insert into Question(question,correctAnswer,image,quizID,questionType) values\r\n" + 
+					"(?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 			ps.setNString(1, question);
 			ps.setNString(2, question.toLowerCase());
 			ps.setNString(3, image);
 			ps.setInt(4, quizID);
+			ps.setString(5, questionType);
 			ps.executeUpdate();
 
 		} catch (Exception e) {
@@ -955,13 +1013,13 @@ public class QuizDAO {
 
 	}
 	public void addQuestion3(String answerA, String answerB, String answerC, String answerD,
-			String correctAnswer,String audio,int quizID) throws SQLException {
+			String correctAnswer,String audio,int quizID,String questionType) throws SQLException {
 
 		try {
 			conn = new DBConnect().getConnection();
 
-			String query = "insert into Question(answerA,answerB,answerC,answerD,correctAnswer,audio,quizID) values\r\n" + 
-					"(?,?,?,?,?,?,?)";
+			String query = "insert into Question(answerA,answerB,answerC,answerD,correctAnswer,audio,quizID,questionType) values\r\n" + 
+					"(?,?,?,?,?,?,?,?)";
 			PreparedStatement ps = conn.prepareStatement(query);
 		
 			ps.setNString(1, answerA);
@@ -971,6 +1029,7 @@ public class QuizDAO {
 			ps.setNString(5, correctAnswer);
 			ps.setNString(6, audio);
 			ps.setInt(7, quizID);
+			ps.setString(8, questionType);
 			ps.executeUpdate();
 
 		} catch (Exception e) {

@@ -107,8 +107,8 @@
 		</div>
 		<small style="color: red" id="errorCatelogy"></small>
 		<div class="form-group">
-			<b>Image</b> <input type="file" class="form-control"
-				style="width: 350px;" name="image" id="quizImage">
+			<b>Image</b><div style="display:flex;"><img id="newImageC" width="50" class="hide"> <input type="file" class="form-control"
+				 name="image" id="quizImage" onchange="readURLC(this);"></div>
 		</div>
 		<small style="color: red" id="errorImage"></small>
 		<div>
@@ -204,6 +204,19 @@
 
 			reader.onload = function(e) {
 				$('#newImage').attr('src', e.target.result).height(50);
+			};
+
+			reader.readAsDataURL(input.files[0]);
+		}
+	}
+	function readURLC(input) {
+		if (input.files && input.files[0]) {
+			document.getElementById('newImageC').classList.remove("hide");
+			
+			var reader = new FileReader();
+
+			reader.onload = function(e) {
+				$('#newImageC').attr('src', e.target.result).height(50);
 			};
 
 			reader.readAsDataURL(input.files[0]);
