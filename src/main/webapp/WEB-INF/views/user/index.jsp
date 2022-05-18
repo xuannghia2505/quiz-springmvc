@@ -55,14 +55,14 @@
 							placeholder="Nhập tên của bạn" value="${user.name }" name="name">
 					</div>
 					<div class="form-group">
-						<label for="exampleInputEmail2">Tên của bạn</label> <input
+						<label for="exampleInputEmail2">Tuổi của bạn</label> <input
 							type="number" class="form-control" id="exampleInputEmail2"
 							placeholder="Nhập tuổi của bạn" value="${user.age }" name="age">
 					</div>
 
 				</div>
 				<div class="modal-footer">
-					<button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+					<button type="button" class="btn btn-primary" data-dismiss="modal">Đóng</button>
 					<button class="btn btn-success" type="submit">Cập nhật</button>
 				</div>
 			</form>

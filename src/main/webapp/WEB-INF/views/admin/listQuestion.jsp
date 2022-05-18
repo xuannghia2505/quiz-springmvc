@@ -26,7 +26,7 @@
 			</c:forEach>
 		</select>
 	
-
+			<c:if test="${quiz!=null }">
 			<c:if test="${quiz.catelogy!='quizenglish'}">
 				<button style="margin-left: 10px;" type="button"
 					class="btn btn-success" id="btnAddQuestion" data-toggle="modal"
@@ -43,6 +43,7 @@
 					data-target="#modalCreateQuestion2">Add New Question Text
 					And Image</button>
 
+			</c:if>
 			</c:if>
 
 		<!-- <div id="formAddQuestion" class="hide" style="width:500px; position:absolute; right:20px;">
@@ -256,8 +257,7 @@
 									<div class="modal-footer">
 										<button type="button" class="btn btn-primary"
 											data-dismiss="modal">Close</button>
-										<button class="btn btn-success" type="submit">Cập
-											nhật</button>
+										<button class="btn btn-success" type="submit">Update</button>
 									</div>
 								</form>
 							</div>
@@ -314,8 +314,7 @@
 									<div class="modal-footer">
 										<button type="button" class="btn btn-primary"
 											data-dismiss="modal">Close</button>
-										<button class="btn btn-success" type="submit">Cập
-											nhật</button>
+										<button class="btn btn-success" type="submit">Update</button>
 									</div>
 								</form>
 							</div>
@@ -424,8 +423,7 @@
 									<div class="modal-footer">
 										<button type="button" class="btn btn-primary"
 											data-dismiss="modal">Close</button>
-										<button class="btn btn-success" type="submit">Cập
-											nhật</button>
+										<button class="btn btn-success" type="submit">Update</button>
 									</div>
 								</form>
 							</div>

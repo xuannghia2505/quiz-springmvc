@@ -153,7 +153,7 @@ public class UserController {
 					model.addAttribute("message","Password không khớp");
 				}else {
 					userDao.insertAcc(username, password,name,age);
-					return new ModelAndView("redirect:/");
+					return new ModelAndView("redirect:/login");
 				}
 		
 			} catch (SQLException e) {
